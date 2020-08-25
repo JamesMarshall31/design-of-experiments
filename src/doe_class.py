@@ -8,7 +8,7 @@ class Factorial():
         df = pd.DataFrame()
         for run in itertools.product([-1, 1],repeat=num_factors)
             s_add = pd.Series(run)
-            df = pd.concat([df,s_add],axis=1)
+            df = pd.concat([df,s_add],axis=1,ignore_index=True)
         return df.transpose()
 
 
