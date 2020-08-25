@@ -20,6 +20,10 @@ setup(
     ],
     long_description=long_description,
     long_description_content_type="text/markdown",
+    install_requires = [
+        "numpy == 1.19.1",
+        "pandas == 1.1.1"
+    ],
     extras_require={
         "dev": [
             "pytest>=6.0.1",
