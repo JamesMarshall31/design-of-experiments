@@ -6,18 +6,16 @@ import itertools
 
 class Factorial():
     def full_factorial(dic_factors):
-        num_factors = len(dic_factors)
         df = pd.DataFrame()
         factor_levels =[]
         factor_names=[]
-
 
         for level in dic_factors:
             factor_names.append(level)
             for x in range(len(dic_factors[level])):
                 factor_levels.append(dic_factors[level][x])
 
-        for run in itertools.product([-1, 1],repeat=num_factors):
+        for run in itertools.product([-1, 1],repeat=len(dic_factors)):
             run = list(run)
             for i in range(len(run)):
                 if run[i]==-1:
