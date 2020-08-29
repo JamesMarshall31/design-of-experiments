@@ -7,7 +7,7 @@ setup(
     name='designofexperiment',
     version='1.0.2',
     description='A Python Package for intuitive design of experiments with user-friendly analysis of results',
-    py_modules=["doe_class"],
+    py_modules=["design"],
     package_dir={'': 'src'},
     classifiers = [
         "Programming Language :: Python :: 3",
