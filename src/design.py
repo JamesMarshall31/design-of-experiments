@@ -9,13 +9,28 @@ import math
 class Factorial():
     def full_factorial_2level(dic_factors):
         """
-        Creates a Two-level full factorial design, from the dictionary of Factors entered
+        Creates a Two-level full factorial design from the dictionary of factors entered,
+        if more than two levels are given for each factor the maximum and minimum values will be selected
 
-        example:
+        Parameters:
+            dic_factors: The dictionary of factors to be included in the full factorial's design
 
-        Factors = {'Height':[1.6,2],'Width':[0.2,0.4],'Depth':[0.2,0.3]}
-        doe_class.Factorial.full_factorial(Factors)
+        Returns:
+            df: A dataframe of the two-level full factorial resulting from the factors entered
 
+        Example:
+            >> import design
+            >> Factors = {'Height':[1.6,2],'Width':[0.2,0.4],'Depth':[0.2,0.3]}
+            >> design.Factorial.full_factorial_2level(Factors)
+               Height  Width  Depth
+            0     1.6    0.2    0.2
+            1     1.6    0.2    0.3
+            2     1.6    0.4    0.2
+            3     1.6    0.4    0.3
+            4     2.0    0.2    0.2
+            5     2.0    0.2    0.3
+            6     2.0    0.4    0.2
+            7     2.0    0.4    0.3
         """
         df = pd.DataFrame()
         factor_levels =[]
@@ -33,6 +48,31 @@ class Factorial():
         return df
 
     def full_factorial(dic_factors):
+        """
+        Creates a full factorial design from the dictionary of factors, but does not choose
+        highest and lowest levels of each factor.
+
+        Parameters:
+            dic_factors: The dictionary of factors to be included in the full factorial's design
+
+        Returns:
+            df: A dataframe of the full factorial resulting from the factors entered
+
+        Example:
+            >> import design
+            >> Factors = {'Height':[1.6,1.8,2],'Width':[0.2,0.3,0.4]}
+            >> design.Factorial.full_factorial(Factors)
+                Height  Width
+            0     1.6    0.2
+            1     1.6    0.3
+            2     1.6    0.4
+            3     1.8    0.2
+            4     1.8    0.3
+            5     1.8    0.4
+            6     2.0    0.2
+            7     2.0    0.3
+            8     2.0    0.4
+        """
         df = pd.DataFrame()
         factor_levels = []
         factor_names = []
@@ -48,13 +88,41 @@ class Factorial():
         return df
 
     def frac_fact_2level(dic_factors,runs):
+        """
+        Returns a fractional factorial based on the dictionary of factors entered and the runs entered,
+         the number of runs of the design will be the next lowest power of 2 from the runs entered
+         i.e 9->8, 8->8
+
+        Parameters:
+            dic_factors: The dictionary of factors to be included in the fractional factorial's design.
+
+            runs: The number of runs the design can use - if the number of runs causes the design's resolution
+            to be less than three then it will not work.
+
+        returns:
+            df: A dataframe of the runs for the fractional factorial resulting from the factors and runs entered.
+
+        Example:
+            >> import design
+            >> Factors = {'Height':[1.6,2],'Width':[0.2,0.4],'Depth':[0.2,0.3],'Temp':[10,20],'Pressure':[100,200]}
+            >> design.Factorial.frac_fact_2level(Factors,10)
+                Height  Width  Depth  Temp  Pressure
+            0     1.6    0.2    0.2    20       200
+            1     1.6    0.2    0.3    20       100
+            2     1.6    0.4    0.2    10       200
+            3     1.6    0.4    0.3    10       100
+            4     2.0    0.2    0.2    10       100
+            5     2.0    0.2    0.3    10       200
+            6     2.0    0.4    0.2    20       100
+            7     2.0    0.4    0.3    20       200
+        """
         df = pd.DataFrame()
         factor_levels = []
         factor_names = []
         for name in dic_factors:
             factor_names.append(name)
             factor_levels.append([min(dic_factors[name]),max(dic_factors[name])])
-        runs = int((1<<(runs-1).bit_length())/2) # if runs entered isn't a power of 2 this this will set it to the
+        runs = int((1<<(runs).bit_length())/2) # if runs entered isn't a power of 2 this this will set it to the
         # next lowest power of 2
         full_fact_level = int(math.log(runs,2))
         for run in itertools.product([-1, 1], repeat=full_fact_level):
