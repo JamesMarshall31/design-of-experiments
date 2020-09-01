@@ -1,5 +1,6 @@
 # Our Design of experiment class
 
+import urllib.request
 import pandas as pd
 import itertools
 import math
@@ -213,5 +214,42 @@ class Factorial():
         # each factor using the factor_levels list
         for i in range(len(dic_factors)):
             df[i] = df[i].apply(lambda y: factor_levels[i][0] if y == -1 else factor_levels[i][1])
+        df = df.rename(columns=lambda y: factor_names[y])
+        return df
+
+    def plackett_burman(dic_factors):
+        """
+        Returns a Plackett-Burman design where the number of runs is the next multiple of four
+        higher than the number of factors entered.
+
+
+        """
+        # Plackett-Burman designs are made using hadamard matrices constructed via Paley's method
+        # We will be taking in these hadamard matrices via an online library
+        factor_names = []
+        factor_levels = []
+        for name in dic_factors:
+            factor_names.append(name)
+            factor_levels.append([min(dic_factors[name]), max(dic_factors[name])])
+
+        url_dictionary = {8: "http://neilsloane.com/hadamard/had.8.txt",
+                          12: "http://neilsloane.com/hadamard/had.12.txt",
+                          16: "http://neilsloane.com/hadamard/had.16.0.txt",
+                          20: "http://neilsloane.com/hadamard/had.20.hall.n.txt",
+                          24: "http://neilsloane.com/hadamard/had.24.pal.txt",
+                          28: "http://neilsloane.com/hadamard/had.28.pal2.txt",
+                          32: "http://neilsloane.com/hadamard/had.32.pal.txt"}
+        runs = len(dic_factors) + (4-(len(dic_factors)%4))
+        file = urllib.request.urlopen(url_dictionary.get(runs))
+        array = []
+        for line in file:
+            decoded_line = line.decode("utf-8")
+            if decoded_line[0] == 'H':
+                break
+            array.append(list(decoded_line.split('\n')[0]))
+        df = pd.DataFrame(array[(runs-len(dic_factors)):])
+        df = df.transpose()
+        for i in range(len(dic_factors)):
+            df[i] = df[i].apply(lambda y: factor_levels[i][0] if y == '-' else factor_levels[i][1])
         df = df.rename(columns=lambda y: factor_names[y])
         return df
