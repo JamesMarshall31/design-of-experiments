@@ -253,3 +253,27 @@ class Factorial():
             df[i] = df[i].apply(lambda y: factor_levels[i][0] if y == '-' else factor_levels[i][1])
         df = df.rename(columns=lambda y: factor_names[y])
         return df
+
+    def box_behnken(dic_factors):
+        df = pd.DataFrame()
+        factor_levels = []
+        factor_names = []
+
+        for name in dic_factors:
+            factor_names.append(name)
+            factor_levels.append([min(dic_factors[name]),(min(dic_factors[name])+max(dic_factors[name]))/2, max(dic_factors[name])])
+        # This for loop will go through too many iterations, generating +1,+1,+1 designs,
+        # so a conditional is added to cut it down
+        for run in itertools.product([-1,1,0], repeat=len(dic_factors)):
+            run = list(run)
+            if run.count(1) < 3 and run.count(-1) < 3 and run.count(0) == len(dic_factors)-2:
+                s_add = pd.Series(run)
+                df = pd.concat([df, s_add], axis=1, ignore_index=True)
+        #for loop adds default centre runs
+        for i in range(len(dic_factors)):
+            df = pd.concat([df,pd.Series([0,0,0])],axis=1, ignore_index=True)
+        df = df.transpose()
+        for i in range(len(dic_factors)):
+            df[i] = df[i].apply(lambda y: factor_levels[i][0] if y == -1 else (factor_levels[i][1] if y==0 else factor_levels[i][2]))
+        df = df.rename(columns=lambda y: factor_names[y])
+        return df
