@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='designofexperiment',
-    version='1.3.0',
+    version='1.4.1',
     description='A Python Package for intuitive design of experiments with user-friendly analysis of results',
     py_modules=["design"],
     package_dir={'': 'src'},

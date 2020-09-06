@@ -300,8 +300,8 @@ def central_composite(dic_factors):
         extremeplus = factor_levels[i][1] + ((factor_levels[i][2] - factor_levels[i][1]) * alpha)
         extrememinus = factor_levels[i][1] - ((factor_levels[i][2] - factor_levels[i][1]) * alpha)
         for j in range(len(dic_factors)):
-            run1.append(0)
-            run2.append(0)
+            run1.append(factor_levels[j][1])
+            run2.append(factor_levels[j][1])
         run1[i] = extremeplus
         run2[i] = extrememinus
         s_add1 = pd.Series(run1)
