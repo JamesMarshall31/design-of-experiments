@@ -219,11 +219,10 @@ def frac_fact_2level(dic_factors, runs):
     return df
 
 
-def plackett_burman(dic_factors):
+def plackett_burman(dic_factors,runs):
     """
     Returns a Plackett-Burman design where the number of runs is the next multiple of four
-    higher than the number of factors entered.
-
+    higher than the number of runs entered if the runs given isn't a multiple of four.
 
     """
     # Plackett-Burman designs are made using hadamard matrices constructed via Paley's method
@@ -241,7 +240,9 @@ def plackett_burman(dic_factors):
                       24: "http://neilsloane.com/hadamard/had.24.pal.txt",
                       28: "http://neilsloane.com/hadamard/had.28.pal2.txt",
                       32: "http://neilsloane.com/hadamard/had.32.pal.txt"}
-    runs = len(dic_factors) + (4 - (len(dic_factors) % 4))
+    if runs%4 != 0:
+        runs = runs + (4 - (runs % 4))
+
     file = urllib.request.urlopen(url_dictionary.get(runs))
     array = []
     for line in file:
@@ -314,3 +315,5 @@ def central_composite(dic_factors):
         df3 = pd.DataFrame([[factor_levels[i][1], factor_levels[i][1], factor_levels[i][1]]], columns=list(dic_factors))
         df = df.append(df3, ignore_index=True)
     return df
+
+
