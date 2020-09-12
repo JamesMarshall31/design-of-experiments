@@ -265,8 +265,10 @@ def box_behnken(dic_factors):
 
     for name in dic_factors:
         factor_names.append(name)
-        factor_levels.append(
-            [min(dic_factors[name]), (min(dic_factors[name]) + max(dic_factors[name])) / 2, max(dic_factors[name])])
+        if len(dic_factors[name]) != 3:
+            factor_levels.append([min(dic_factors[name]), (min(dic_factors[name]) + max(dic_factors[name])) / 2, max(dic_factors[name])])
+        else:
+            factor_levels.append([sorted(dic_factors[name])[0],sorted(dic_factors[name])[1],sorted(dic_factors[name])[2]])
     # This for loop will go through too many iterations, generating +1,+1,+1 designs,
     # so a conditional is added to cut it down
     for run in itertools.product([-1, 1, 0], repeat=len(dic_factors)):
@@ -315,5 +317,4 @@ def central_composite(dic_factors):
         df3 = pd.DataFrame([[factor_levels[i][1], factor_levels[i][1], factor_levels[i][1]]], columns=list(dic_factors))
         df = df.append(df3, ignore_index=True)
     return df
-
 
