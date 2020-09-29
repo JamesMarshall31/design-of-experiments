@@ -4,6 +4,8 @@ import urllib.request
 import pandas as pd
 import itertools
 import math
+import lhsmdu
+import numpy as np
 
 
 def full_factorial_2level(dic_factors):
@@ -317,4 +319,22 @@ def central_composite(dic_factors):
         df3 = pd.DataFrame([[factor_levels[i][1], factor_levels[i][1], factor_levels[i][1]]], columns=list(dic_factors))
         df = df.append(df3, ignore_index=True)
     return df
+
+def latin_hypercube(dic_factors,runs):
+    df = pd.DataFrame()
+    factor_names = []
+    count=0
+    array = lhsmdu.sample(len(dic_factors), runs)
+    for name in dic_factors:
+        factor_names.append(name)
+        low = min(dic_factors[name])
+        high = max(dic_factors[name])
+        decoder = lambda x: low+((high-low)*x)
+        non_coded = np.array(list(map(decoder, array[count])))
+        s_add = pd.Series(non_coded[0][0])
+        count += 1
+        df = pd.concat([df, s_add], ignore_index=True, axis=1)
+        df = df.rename(columns=lambda y: factor_names[y])
+    return df
+
 
