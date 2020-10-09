@@ -5,9 +5,10 @@ with open("README.md", "r") as fh:
 
 setup(
     name='designofexperiment',
-    version='1.5.5',
+    version='1.6.0',
     description='A Python Package for intuitive design of experiments with user-friendly analysis of results',
-    py_modules=["design"],
+    py_modules=["design",
+                "analysis"],
     package_dir={'': 'src'},
     classifiers = [
         "Programming Language :: Python :: 3",
