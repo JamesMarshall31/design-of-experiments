@@ -5,12 +5,40 @@ import itertools
 
 
 def fit_two_level_screening(df):
+    """
+    Returns p-values for unreplicated two level  factorial designs
+
+    Parameters:
+        df: The dataframe containing the experimental design
+
+    Returns:
+         Dataframe of P Values
+
+    Example:
+        >>>import analysis
+        >>>import design
+        >>>factors = {'Temp':[50,25],'Concentration':[0.4,0.6],'Enzyme':[-1,1]}
+        >>>df = design.full_factorial_2level(factors)
+        >>>df['Yield'] = [60,52,54,45,72,83,68,80]
+        >>>print(fit_two_level_screening(df))
+                                    Individual p-Value
+        Temp                                   0.0017
+        Concentration                          0.0610
+        Enzyme                                 0.4551
+        Temp*Concentration                     0.5014
+        Temp*Enzyme                            0.0142
+        Concentration*Enzyme                   1.0000
+        Temp*Concentration*Enzyme              0.8516
+    """
     n = len(df.index)
+    # p_columns_list stores all the actual variable names, by stopping before the last column it doesnt include results
     p_columns_list = list(df.columns)[:-1]
     # Creating the T matrix
     # ------------------------
     t_matrix = np.ones((n, n), dtype=int)
+    # count variable keeps track of what row of the t-matrix is currently being added to
     count = 1
+    # for loop to set all numbers to one or minus one
     for i in df.columns[0:-1]:
         high = max(df[i])
         low = min(df[i])
@@ -30,7 +58,7 @@ def fit_two_level_screening(df):
             for i in combination:
                 string = string + p_columns_list[i-1] + '*'
             t_matrix[count] = 1
-            string = string[:-1]        # Get rid of asterisk
+            string = string[:-1]        # Get rid of asterisk at end
             p_columns_list.append(string)
             for i in range(r):
                 t_matrix[count] = t_matrix[count] * t_matrix[combination[i]]
@@ -47,7 +75,7 @@ def fit_two_level_screening(df):
 
     # Using the T matrix to get the contrasts
     # ---------------------------------------
-    results = np.array(df['Yield']).reshape(n, 1)
+    results = np.array(df.iloc[:,-1:]).reshape(n, 1)
     Contrasts = np.matmul(t_matrix, results)        # The first index is the intercept contrast
     Contrasts = Contrasts[1:n]
 
@@ -84,7 +112,7 @@ def fit_two_level_screening(df):
     return p_values
 
 
-'''factors = {'Temp':[-1,1],'Concentration':[-1,1],'Enzyme':[-1,1]}
+factors = {'Temp':[50,25],'Concentration':[0.4,0.6],'Enzyme':[-1,1]}
 df = design.full_factorial_2level(factors)
 df['Yield'] = [60,52,54,45,72,83,68,80]
-print(fit_two_level_screening(df))'''
+print(fit_two_level_screening(df))
